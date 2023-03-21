@@ -6,6 +6,13 @@ This package is a Python SDK to the VMS (VAST Management System) REST API.
 
 While developing against the VMS API use the documentation locally available at https://vms-host-name/docs.
 
+Install
+-------
+
+```bash
+pip install vastpy
+```
+
 Usage
 -----
 
