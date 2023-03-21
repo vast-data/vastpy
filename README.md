@@ -4,7 +4,7 @@ VASTPY
 
 This package is a Python SDK to the VMS (VAST Management System) REST API.
 
-While developing against the VMS API use the documentation locally available at https://<VMS>/docs.
+While developing against the VMS API use the documentation locally available at https://vms-host-name/docs.
 
 Usage
 -----
