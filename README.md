@@ -13,6 +13,8 @@ Install
 pip install vastpy
 ```
 
+The package is hosted in PyPI: https://pypi.org/project/vastpy/
+
 Usage
 -----
 
