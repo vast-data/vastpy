@@ -45,6 +45,14 @@ class VASTClient(object):
         if data:
             headers['Content-Type'] = 'application/json'
             data = json.dumps(data).encode('utf-8')
+        if fields:
+            result = []
+            for k, v in fields.items():
+                if isinstance(v, list):
+                    result.extend((k, i) for i in v)
+                else:
+                    result.append((k, v))
+            fields = result
         r = pm.request(method, f'https://{self._address}/{self._url}/', headers=headers, fields=fields, body=data)
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(f'Response for request {method} {self._url} with {fields} failed with error {r.status} and message {r.data}')

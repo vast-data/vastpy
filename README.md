@@ -61,6 +61,17 @@ view = client.views[view['id']].patch(protocols=['NFS', 'SMB'])
 client.views[view['id']].delete()
 ```
 
+Reading metrics:
+
+```python
+
+client.monitors.ad_hoc_query.get(object_type='cluster',
+                                 time_frame='5m',
+				 prop_list=['ProtoMetrics,proto_name=ProtoCommon,iops',
+				            'ProtoMetrics,proto_name=ProtoCommon,iops'])
+
+```
+
 Version Compatibility
 ---------------------
 
