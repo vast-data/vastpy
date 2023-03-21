@@ -68,7 +68,7 @@ Reading metrics:
 client.monitors.ad_hoc_query.get(object_type='cluster',
                                  time_frame='5m',
 				 prop_list=['ProtoMetrics,proto_name=ProtoCommon,iops',
-				            'ProtoMetrics,proto_name=ProtoCommon,iops'])
+				            'ProtoMetrics,proto_name=ProtoCommon,bw'])
 
 ```
 
