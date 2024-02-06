@@ -48,7 +48,7 @@ Creating objects:
 ```python
 policy, = client.viewpolicies.get(name='default')
 
-view = client.views.post(path='/prod/pgsql', policy_id=default['id'], create_dir=True)
+view = client.views.post(path='/prod/pgsql', policy_id=policy['id'], create_dir=True)
 ```
 
 Modifying/deleting objects:
