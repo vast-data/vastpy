@@ -71,4 +71,4 @@ class VASTClient(object):
     def options(self, **params):
         return self.request('OPTIONS', fields=params)
     def delete(self, **params):
-        return self.request('DELETE', fields=params)
+        return self.request('DELETE', data=params)
