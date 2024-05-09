@@ -3,7 +3,16 @@ import urllib3
 import http
 import json
 
-class RESTFailure(Exception): pass
+class RESTFailure(Exception):
+    def __init__(self, method, url, fields, status, data):
+        self.method = method
+        self.url = url
+        self.fields = fields
+        self.status = status
+        self.data = data
+
+        super().__init__(f'Response for request {method} {url} with {fields} failed with error {status} and message {data}')
+
 SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.CREATED,
                  http.HTTPStatus.ACCEPTED,
@@ -55,7 +64,7 @@ class VASTClient(object):
             fields = result
         r = pm.request(method, f'https://{self._address}/{self._url}/', headers=headers, fields=fields, body=data)
         if r.status not in SUCCESS_CODES:
-            raise RESTFailure(f'Response for request {method} {self._url} with {fields} failed with error {r.status} and message {r.data}')
+            raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data
         if data:
             return json.loads(data.decode('utf-8'))
