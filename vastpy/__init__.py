@@ -66,8 +66,9 @@ class VASTClient(object):
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data
-        if data:
+        if data and r.headers.get('Content-Type') == 'application/json':
             return json.loads(data.decode('utf-8'))
+        return data
 
     def get(self, **params):
         return self.request('GET', fields=params)
