@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "vastpy"
-version = "0.2.3"
+version = "0.3.1"
 description = ""
 authors = ["Alon Horev <alon@vastdata.com>"]
 readme = "README.md"
+
+[tool.poetry.scripts]
+vastpy-cli = "vastpy.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.6"

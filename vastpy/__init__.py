@@ -11,7 +11,7 @@ class RESTFailure(Exception):
         self.status = status
         self.data = data
 
-        super().__init__(f'Response for request {method} {url} with {fields} failed with error {status} and message {data}')
+        super().__init__(f'response for {method} {url} with params={fields} failed with error {status} and message {data}')
 
 SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.CREATED,
@@ -66,7 +66,7 @@ class VASTClient(object):
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data
-        if data and r.headers.get('Content-Type') == 'application/json':
+        if 'application/json' in r.headers.get('Content-Type', '') and data:
             return json.loads(data.decode('utf-8'))
         return data
 

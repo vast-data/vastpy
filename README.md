@@ -15,8 +15,8 @@ pip install vastpy
 
 The package is hosted in PyPI: https://pypi.org/project/vastpy/
 
-Usage
------
+SDK Usage
+---------
 
 Initialization:
 
@@ -69,6 +69,54 @@ client.monitors.ad_hoc_query.get(object_type='cluster',
                                  time_frame='5m',
 				 prop_list=['ProtoMetrics,proto_name=ProtoCommon,iops',
 				            'ProtoMetrics,proto_name=ProtoCommon,bw'])
+
+```
+
+CLI Usage
+---------
+
+Credentials can be passed through environment variables or parameters:
+
+```bash
+
+$ export VMS_USER=admin VMS_PASSWORD=******** VMS_ADDRESS=vast-file-server
+
+$ vastpy-cli get snapshots fields=id,path
+[
+  {
+    "path": "/dbs",
+    "id": 12
+  },
+  {
+    "path": "/datasets",
+    "id": 43
+  },
+...
+
+$ vastpy-cli --user=admin --password==******** --address=vast-file-server get snapshots fields=id,path
+
+```
+
+Any method (get, post, patch, delete) is supported:
+
+```bash
+
+$ vastpy-cli post snapshots path=/projects/db name=db
+{
+  "id": 4707792,
+  "name": "db_snapshot",
+  "path": "/projects/db"
+...
+
+$ vastpy-cli post views path=/projects/db create_dir=true policy_id=1
+{
+  "id": 109,
+  "guid": "551b5fc0-42a2-4b77-b385-d5bf6a6c1538",
+  "name": "view-109",
+  "title": "/projects/db",
+...
+
+$ vastpy-cli delete views/109
 
 ```
 
