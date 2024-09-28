@@ -11,7 +11,7 @@ class RESTFailure(Exception):
         self.status = status
         self.data = data
 
-        super().__init__(f'response for {method} {url} with params={fields} failed with error {status} and message {data}')
+        super().__init__(f'response for {method} {url} with params={fields} failed with error {status} and message {data.decode("utf-8")}')
 
 SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.CREATED,
