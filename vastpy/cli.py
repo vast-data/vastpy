@@ -88,8 +88,10 @@ def main():
         sys.exit(2)
     if isinstance(result, bytes):
         print(result.decode('utf-8'))
-    elif isinstance(result, list) and not args.json:
+    elif isinstance(result, (list, dict)) and not args.json:
         if result:
+            if isinstance(result, dict):
+                result = [result]
             tabulate(result)
     else: # json document
         print(json.dumps(result, indent=2))
