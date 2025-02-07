@@ -14,6 +14,8 @@ def key_value_pair(s):
 def pairs_to_multidict(l):
     result = {}
     for key, value in l:
+        if value == "null":
+            value = None
         if key in result:
             if isinstance(result[key], list):
                 result[key].append(value)
