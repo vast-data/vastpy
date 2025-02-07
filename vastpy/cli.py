@@ -11,11 +11,15 @@ def key_value_pair(s):
     key, value = s.split('=', 1)
     return (key, value)
 
+CONSTS = {'null': None, 'true': True, 'false': False}
+
 def pairs_to_multidict(l):
     result = {}
     for key, value in l:
-        if value == "null":
-            value = None
+        if value.isdigit():
+            value = int(value)
+        else:
+            value = CONSTS.get(value, value)
         if key in result:
             if isinstance(result[key], list):
                 result[key].append(value)
@@ -26,15 +30,14 @@ def pairs_to_multidict(l):
     return result
 
 def tabulate(data):
-    keys = list(data[0].keys())
-    key_to_width  = {k: len(k) for k in keys}
+    key_to_width = {}
     rows = []
     for i in data:
         row = []
         for key, value in i.items():
             value = str(value)
             row.append(value)
-            if key_to_width[key] < len(value):
+            if key_to_width.get(key, 0) < len(value):
                 key_to_width[key] = len(value)
         rows.append(row)
     key_to_width_items = list(key_to_width.items())
