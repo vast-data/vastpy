@@ -11,15 +11,16 @@ def key_value_pair(s):
     key, value = s.split('=', 1)
     return (key, value)
 
-CONSTS = {'null': None, 'true': True, 'false': False}
-
 def pairs_to_multidict(l):
     result = {}
     for key, value in l:
-        if value.isdigit():
-            value = int(value)
-        else:
-            value = CONSTS.get(value, value)
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError:
+            if value.isdigit():
+                value = int(value)
+            # default: string
+
         if key in result:
             if isinstance(result[key], list):
                 result[key].append(value)
