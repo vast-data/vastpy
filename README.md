@@ -120,6 +120,29 @@ $ vastpy-cli delete views/109
 
 ```
 
+Accepts JSON file input (`--json-params <JSON_file>`):
+
+```bash
+
+$ cat input.json
+{
+  "read_access_users": [
+    "vastadmin"
+  ],
+  "read_access_users_groups": [
+    "vastadmin"
+  ],
+  "protocols_audit": {
+    "log_full_path": true,
+    "modify_data_md": true,
+    "create_delete_files_dirs_objects": true
+  },
+  "enable_vast_db_audit": true
+}
+
+$ vastpy-cli patch clusters/<cluster_id>/auditing --json-params input.json
+```
+
 Version Compatibility
 ---------------------
 
