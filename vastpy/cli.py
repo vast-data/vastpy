@@ -74,7 +74,7 @@ def prepare_parser():
     add_argument('VMS_CERT_FILE', '--cert-file', help='Path to custom SSL certificate for VMS')
     add_argument('VMS_CERT_SERVER', '--cert-server-name', help='Address of custom SSL certificate authority')
     parser.add_argument('--json', action='store_true')
-    parser.add_argument('--json-params', help='JSON file with input params (post, patch operations)')
+    parser.add_argument('-i', '--file-input', help='JSON file with as body for POST/PATCH operations')
     parser.add_argument('operation', type=str, choices=OPERATIONS)
     parser.add_argument('endpoint', type=str)
     parser.add_argument('params', type=key_value_pair, nargs='*')
@@ -90,9 +90,9 @@ def main():
     method = getattr(client[args.endpoint], args.operation)
 
     params = {}
-    if args.json_params:
+    if args.file_input:
         try:
-            with open(args.json_params, 'r') as j:
+            with open(args.file_input, 'r') as j:
                 params = json.load(j)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error reading JSON file: {e}", file=sys.stderr)
