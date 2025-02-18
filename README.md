@@ -120,7 +120,7 @@ $ vastpy-cli delete views/109
 
 ```
 
-Accepts JSON file input (`--json-params <JSON_file>`):
+Accepts JSON file input (`--file-input <JSON_file>`):
 
 ```bash
 
@@ -140,7 +140,7 @@ $ cat input.json
   "enable_vast_db_audit": true
 }
 
-$ vastpy-cli patch clusters/<cluster_id>/auditing --json-params input.json
+$ vastpy-cli patch clusters/<cluster_id>/auditing --file-input input.json
 ```
 
 Version Compatibility
