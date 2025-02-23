@@ -39,7 +39,7 @@ def tabulate(data):
             value = str(value)
             row.append(value)
             if key_to_width.get(key, 0) < len(value):
-                key_to_width[key] = len(value)
+                key_to_width[key] = max(len(key), len(value))
         rows.append(row)
     key_to_width_items = list(key_to_width.items())
     for index, (key, width) in enumerate(key_to_width_items):
