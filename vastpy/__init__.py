@@ -22,9 +22,10 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user, password, address, url='api', cert_file=None, cert_server_name=None):
+    def __init__(self, user, password, address, url='api', cert_file=None, cert_server_name=None, tenant=None):
         self._user = user
         self._password = password
+        self._tenant = tenant
         self._address = address
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
@@ -39,7 +40,8 @@ class VASTClient(object):
                               address=self._address,
                               cert_file=self._cert_file,
                               cert_server_name=self._cert_server_name,
-                              url=f'{self._url}/{part}')
+                              url=f'{self._url}/{part}',
+                              tenant=self._tenant)
 
     def __repr__(self):
         return f'VASTClient(address="{self._address}", url="{self._url}")'
@@ -51,6 +53,8 @@ class VASTClient(object):
             pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
             urllib3.disable_warnings(category=InsecureRequestWarning)
         headers = urllib3.make_headers(basic_auth=self._user + ':' + self._password)
+        if self._tenant:
+            headers['X-Tenant-Name'] = self._tenant
         if data:
             headers['Content-Type'] = 'application/json'
             data = json.dumps(data).encode('utf-8')

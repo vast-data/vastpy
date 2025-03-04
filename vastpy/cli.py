@@ -59,7 +59,7 @@ def tabulate(data):
 
 
 def prepare_parser():
-    parser = argparse.ArgumentParser(description='vastpy/vastcli are the VAST Data Platform RESTful API SDK and ligthweight CLI')
+    parser = argparse.ArgumentParser(description='vastpy/vastpy-cli are the VAST Data Platform RESTful API SDK and lightweight CLI')
     def add_argument(key, *args, **kwargs):
         if key in os.environ:
             kwargs['required'] = False
@@ -71,6 +71,7 @@ def prepare_parser():
     add_argument('VMS_USER', '--user', required=True, help='VMS user name')
     add_argument('VMS_PASSWORD', '--password', required=True, help='VMS password')
     add_argument('VMS_ADDRESS', '--address', required=True, help='VMS address or host name')
+    add_argument('VMS_TENANT_NAME', '--tenant-name', help='VMS Tenant Name or VMS Tenant Domain')
     add_argument('VMS_CERT_FILE', '--cert-file', help='Path to custom SSL certificate for VMS')
     add_argument('VMS_CERT_SERVER', '--cert-server-name', help='Address of custom SSL certificate authority')
     parser.add_argument('--json', action='store_true')
@@ -86,7 +87,8 @@ def main():
                         password=args.password,
                         address=args.address,
                         cert_file=args.cert_file,
-                        cert_server_name=args.cert_server_name)
+                        cert_server_name=args.cert_server_name,
+                        tenant=args.tenant_name)
     method = getattr(client[args.endpoint], args.operation)
 
     params = {}
