@@ -68,10 +68,11 @@ def prepare_parser():
         else:
             parser.add_argument(*args, **kwargs)
     
-    add_argument('VMS_USER', '--user', required=True, help='VMS user name')
-    add_argument('VMS_PASSWORD', '--password', required=True, help='VMS password')
+    add_argument('VMS_USER', '--user', help='VMS user name')
+    add_argument('VMS_PASSWORD', '--password', help='VMS password')
     add_argument('VMS_ADDRESS', '--address', required=True, help='VMS address or host name')
     add_argument('VMS_TENANT_NAME', '--tenant-name', help='VMS Tenant Name or VMS Tenant Domain')
+    add_argument('VMS_TOKEN', '--token', help='VMS API Token')
     add_argument('VMS_CERT_FILE', '--cert-file', help='Path to custom SSL certificate for VMS')
     add_argument('VMS_CERT_SERVER', '--cert-server-name', help='Address of custom SSL certificate authority')
     parser.add_argument('--json', action='store_true')
@@ -88,7 +89,8 @@ def main():
                         address=args.address,
                         cert_file=args.cert_file,
                         cert_server_name=args.cert_server_name,
-                        tenant=args.tenant_name)
+                        tenant=args.tenant_name,
+                        token=args.token)
     method = getattr(client[args.endpoint], args.operation)
 
     params = {}
