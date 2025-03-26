@@ -22,7 +22,7 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user=None, password=None, address, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None):
+    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None):
         self._user = user
         self._password = password
         self._tenant = tenant
@@ -31,10 +31,15 @@ class VASTClient(object):
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
         self._url = url
-        if not (self._token or (self._username and self._password)):
+        has_token = bool(self._token)
+        has_userpass = bool(self._user or self._password)
+
+        if not has_token and not has_userpass:
             raise ValueError("Must provide either username/password or token")
-        if (self._token and self._username) or (self._token and self._password):
+        if has_token and has_userpass:
             raise ValueError("Must provide exactly one of the following - username/password or token")
+        if not self._address:
+            raise ValueError("Must provide a VMS address")
 
     def __getattr__(self, part):
         return self[part]
@@ -59,9 +64,7 @@ class VASTClient(object):
             pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
             urllib3.disable_warnings(category=InsecureRequestWarning)
         if self._token:
-            headers =  {
-                'Api-Token': self._token
-            }
+            headers = {'authorization': f"'Api-Token {self._token}"}
         else:
             headers = urllib3.make_headers(basic_auth=self._user + ':' + self._password)
         if self._tenant:
