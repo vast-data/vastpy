@@ -31,8 +31,8 @@ class VASTClient(object):
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
         self._url = url
-        has_token = bool(self._token)
-        has_userpass = bool(self._user or self._password)
+        has_token = self._token is not None 
+        has_userpass = (self._user is not None or self._password is not None)
 
         if not has_token and not has_userpass:
             raise ValueError("Must provide either username/password or token")
