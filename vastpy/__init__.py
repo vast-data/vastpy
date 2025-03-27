@@ -22,14 +22,24 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user, password, address, url='api', cert_file=None, cert_server_name=None, tenant=None):
+    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None):
         self._user = user
         self._password = password
         self._tenant = tenant
+        self._token = token 
         self._address = address
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
         self._url = url
+        has_token = self._token is not None 
+        has_userpass = (self._user is not None or self._password is not None)
+
+        if not has_token and not has_userpass:
+            raise ValueError("Must provide either username/password or token")
+        if has_token and has_userpass:
+            raise ValueError("Must provide exactly one of the following - username/password or token")
+        if not self._address:
+            raise ValueError("Must provide a VMS address")
 
     def __getattr__(self, part):
         return self[part]
@@ -41,7 +51,8 @@ class VASTClient(object):
                               cert_file=self._cert_file,
                               cert_server_name=self._cert_server_name,
                               url=f'{self._url}/{part}',
-                              tenant=self._tenant)
+                              tenant=self._tenant,
+                              token=self._token)
 
     def __repr__(self):
         return f'VASTClient(address="{self._address}", url="{self._url}")'
@@ -52,7 +63,10 @@ class VASTClient(object):
         else:
             pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
             urllib3.disable_warnings(category=InsecureRequestWarning)
-        headers = urllib3.make_headers(basic_auth=self._user + ':' + self._password)
+        if self._token:
+            headers = {'authorization': f"'Api-Token {self._token}"}
+        else:
+            headers = urllib3.make_headers(basic_auth=self._user + ':' + self._password)
         if self._tenant:
             headers['X-Tenant-Name'] = self._tenant
         if data:
