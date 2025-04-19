@@ -113,7 +113,7 @@ def main():
     elif isinstance(result, (list, dict)) and not args.json:
         if result:
             if isinstance(result, dict):
-                result = [result]
+                result = [dict(property=k, value=v) for k, v in result.items()]
             tabulate(result)
     else: # json document
         print(json.dumps(result, indent=2))
