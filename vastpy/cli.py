@@ -30,33 +30,61 @@ def pairs_to_multidict(l):
             result[key] = value
     return result
 
+def multiline_string(value):
+    if isinstance(value, dict):
+        return [f'{k}: {v}' for k, v in value.items()]
+    return [str(value)]
+
 def tabulate(data):
+    """
+    1. Stringify every element
+    2. Calculate it's width and height
+    # 3. Calculate the screen size and force overwrapping if needed
+    4. Print it!
+    """
     key_to_width = {}
-    rows = []
+    objects = []
     for i in data:
-        row = []
+        obj = {}
         for key, value in i.items():
-            value = str(value)
-            row.append(value)
-            if key_to_width.get(key, 0) < len(value):
-                key_to_width[key] = max(len(key), len(value))
-        rows.append(row)
+            value = multiline_string(value)
+            obj[key] = value
+            longest_row = max(len(i) for i in value)
+            key_to_width[key] = max(key_to_width.get(key, 0), len(key), longest_row)
+        objects.append(obj)
+
+    # print header
     key_to_width_items = list(key_to_width.items())
     for index, (key, width) in enumerate(key_to_width_items):
         print(key.ljust(width + 1), end='')
         if index < len(key_to_width_items) - 1:
             print('|', end='')
     print()
+
+    # print separator
     for _, width in key_to_width.items():
         print('-' * (width + 1) + '+', end='')
     print()
-    for row in rows:
-        for index, (key, value) in enumerate(zip(key_to_width, row)):
-            print(value.ljust(key_to_width[key] + 1), end='')
-            if index < len(key_to_width_items) - 1:
-                print('|', end='')
-        print()
 
+    # print rows
+    for obj in objects:
+        row_index = 0
+        while True:
+            key_to_width_items = list(key_to_width.items())
+            should_continue = False
+            for index, (key, width) in enumerate(key_to_width_items):
+                if obj.get(key):
+                    value = obj[key].pop()
+                    should_continue = should_continue or bool(obj[key])
+                else:
+                    value = ''
+                print(value.ljust(width + 1), end='')
+                if index < len(key_to_width_items) - 1:
+                    print('|', end='')
+            if not should_continue:
+                break
+            print()
+        print()
 
 def prepare_parser():
     parser = argparse.ArgumentParser(description='vastpy/vastpy-cli are the VAST Data Platform RESTful API SDK and lightweight CLI')
