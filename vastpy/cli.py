@@ -32,6 +32,8 @@ def pairs_to_multidict(l):
 
 def multiline_string(value):
     if isinstance(value, dict):
+        if not value:
+            return ['']
         return [f'{k}: {v}' for k, v in value.items()]
     return [str(value)]
 
