@@ -52,7 +52,7 @@ class VASTClient(object):
                               address=self._address,
                               cert_file=self._cert_file,
                               cert_server_name=self._cert_server_name,
-                              url=f'{self._url}{version_path}/{part}'
+                              url=f'{self._url}{version_path}/{part}',
                               tenant=self._tenant,
                               token=self._token)
 
