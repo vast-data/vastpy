@@ -22,7 +22,7 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user, password, address, url='api', cert_file=None, cert_server_name=None, tenant=None):
+    def __init__(self, user, password, address, url='api', cert_file=None, cert_server_name=None, tenant=None, version=None):
         self._user = user
         self._password = password
         self._tenant = tenant
@@ -66,7 +66,8 @@ class VASTClient(object):
                 else:
                     result.append((k, v))
             fields = result
-        r = pm.request(method, f'https://{self._address}/{self._url}/', headers=headers, fields=fields, body=data)
+        version_path = f'/{self._version}' if self._version else ''
+        r = pm.request(method, f'https://{self._address}/{self._url}{version_path}/', headers=headers, fields=fields, body=data)
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data
