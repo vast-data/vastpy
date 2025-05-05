@@ -30,6 +30,7 @@ class VASTClient(object):
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
         self._url = url
+        self._version = version
 
     def __getattr__(self, part):
         return self[part]
