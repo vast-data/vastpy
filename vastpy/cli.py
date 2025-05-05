@@ -30,33 +30,63 @@ def pairs_to_multidict(l):
             result[key] = value
     return result
 
+def multiline_string(value):
+    if isinstance(value, dict):
+        if not value:
+            return ['']
+        return [f'{k}: {v}' for k, v in value.items()]
+    return [str(value)]
+
 def tabulate(data):
+    """
+    1. Stringify every element
+    2. Calculate it's width and height
+    # 3. Calculate the screen size and force overwrapping if needed
+    4. Print it!
+    """
     key_to_width = {}
-    rows = []
+    objects = []
     for i in data:
-        row = []
+        obj = {}
         for key, value in i.items():
-            value = str(value)
-            row.append(value)
-            if key_to_width.get(key, 0) < len(value):
-                key_to_width[key] = max(len(key), len(value))
-        rows.append(row)
+            value = multiline_string(value)
+            obj[key] = value
+            longest_row = max(len(i) for i in value)
+            key_to_width[key] = max(key_to_width.get(key, 0), len(key), longest_row)
+        objects.append(obj)
+
+    # print header
     key_to_width_items = list(key_to_width.items())
     for index, (key, width) in enumerate(key_to_width_items):
         print(key.ljust(width + 1), end='')
         if index < len(key_to_width_items) - 1:
             print('|', end='')
     print()
+
+    # print separator
     for _, width in key_to_width.items():
         print('-' * (width + 1) + '+', end='')
     print()
-    for row in rows:
-        for index, (key, value) in enumerate(zip(key_to_width, row)):
-            print(value.ljust(key_to_width[key] + 1), end='')
-            if index < len(key_to_width_items) - 1:
-                print('|', end='')
-        print()
 
+    # print rows
+    for obj in objects:
+        row_index = 0
+        while True:
+            key_to_width_items = list(key_to_width.items())
+            should_continue = False
+            for index, (key, width) in enumerate(key_to_width_items):
+                if obj.get(key):
+                    value = obj[key].pop()
+                    should_continue = should_continue or bool(obj[key])
+                else:
+                    value = ''
+                print(value.ljust(width + 1), end='')
+                if index < len(key_to_width_items) - 1:
+                    print('|', end='')
+            if not should_continue:
+                break
+            print()
+        print()
 
 def prepare_parser():
     parser = argparse.ArgumentParser(description='vastpy/vastpy-cli are the VAST Data Platform RESTful API SDK and lightweight CLI')
@@ -68,10 +98,11 @@ def prepare_parser():
         else:
             parser.add_argument(*args, **kwargs)
     
-    add_argument('VMS_USER', '--user', required=True, help='VMS user name')
-    add_argument('VMS_PASSWORD', '--password', required=True, help='VMS password')
+    add_argument('VMS_USER', '--user', help='VMS user name')
+    add_argument('VMS_PASSWORD', '--password', help='VMS password')
     add_argument('VMS_ADDRESS', '--address', required=True, help='VMS address or host name')
     add_argument('VMS_TENANT_NAME', '--tenant-name', help='VMS Tenant Name or VMS Tenant Domain')
+    add_argument('VMS_TOKEN', '--token', help='VMS API Token')
     add_argument('VMS_CERT_FILE', '--cert-file', help='Path to custom SSL certificate for VMS')
     add_argument('VMS_CERT_SERVER', '--cert-server-name', help='Address of custom SSL certificate authority')
     add_argument('VMS_API_VERSION', '--api-version', help='API version')
@@ -91,6 +122,7 @@ def main():
                         cert_server_name=args.cert_server_name,
                         tenant=args.tenant_name,
                         version=args.api_version)
+                        token=args.token)
     method = getattr(client[args.endpoint], args.operation)
 
     params = {}
@@ -113,7 +145,7 @@ def main():
     elif isinstance(result, (list, dict)) and not args.json:
         if result:
             if isinstance(result, dict):
-                result = [result]
+                result = [dict(property=k, value=v) for k, v in result.items()]
             tabulate(result)
     else: # json document
         print(json.dumps(result, indent=2))
