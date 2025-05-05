@@ -36,12 +36,13 @@ class VASTClient(object):
         return self[part]
 
     def __getitem__(self, part):
+        version_path = f'/{self._version}' if self._version else ''
         return self.__class__(user=self._user,
                               password=self._password,
                               address=self._address,
                               cert_file=self._cert_file,
                               cert_server_name=self._cert_server_name,
-                              url=f'{self._url}/{part}',
+                              url=f'{self._url}{version_path}/{part}',
                               tenant=self._tenant)
 
     def __repr__(self):
