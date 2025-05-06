@@ -22,7 +22,7 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None):
+    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None, version=None):
         self._user = user
         self._password = password
         self._tenant = tenant
@@ -31,6 +31,7 @@ class VASTClient(object):
         self._cert_file = cert_file
         self._cert_server_name = cert_server_name
         self._url = url
+        self._version = version
         has_token = self._token is not None 
         has_userpass = (self._user is not None or self._password is not None)
 
@@ -45,14 +46,16 @@ class VASTClient(object):
         return self[part]
 
     def __getitem__(self, part):
+        version_path = f'/{self._version}' if self._version else ''
         return self.__class__(user=self._user,
                               password=self._password,
                               address=self._address,
                               cert_file=self._cert_file,
                               cert_server_name=self._cert_server_name,
-                              url=f'{self._url}/{part}',
+                              url=f'{self._url}{version_path}/{part}',
                               tenant=self._tenant,
-                              token=self._token)
+                              token=self._token,
+                              version=self._version)
 
     def __repr__(self):
         return f'VASTClient(address="{self._address}", url="{self._url}")'
@@ -80,7 +83,8 @@ class VASTClient(object):
                 else:
                     result.append((k, v))
             fields = result
-        r = pm.request(method, f'https://{self._address}/{self._url}/', headers=headers, fields=fields, body=data)
+        version_path = f'/{self._version}' if self._version else ''
+        r = pm.request(method, f'https://{self._address}/{self._url}{version_path}/', headers=headers, fields=fields, body=data)
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data
