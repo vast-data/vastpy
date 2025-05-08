@@ -105,6 +105,7 @@ def prepare_parser():
     add_argument('VMS_TOKEN', '--token', help='VMS API Token')
     add_argument('VMS_CERT_FILE', '--cert-file', help='Path to custom SSL certificate for VMS')
     add_argument('VMS_CERT_SERVER', '--cert-server-name', help='Address of custom SSL certificate authority')
+    add_argument('VMS_API_VERSION', '--api-version', help='API version')
     parser.add_argument('--json', action='store_true')
     parser.add_argument('-i', '--file-input', help='JSON file with as body for POST/PATCH operations')
     parser.add_argument('operation', type=str, choices=OPERATIONS)
@@ -120,7 +121,8 @@ def main():
                         cert_file=args.cert_file,
                         cert_server_name=args.cert_server_name,
                         tenant=args.tenant_name,
-                        token=args.token)
+                        token=args.token,
+                        version=args.api_version)
     method = getattr(client[args.endpoint], args.operation)
 
     params = {}
