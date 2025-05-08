@@ -42,7 +42,7 @@ client = VASTClient(
     version='api-version' # An optional field, defaults to oldest API
 )
 ```
-# Obtainig an API Token - Vast 5.3+
+### Obtainig an API Token - Vast 5.3+
 ```python
 # Authenticate with user + password
 client = VASTClient(
