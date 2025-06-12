@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vastpy"
-version = "0.3.13"
+version = "0.3.14"
 description = ""
 authors = ["Alon Horev <alon@vastdata.com>"]
 readme = "README.md"
