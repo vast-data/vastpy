@@ -145,15 +145,7 @@ def main():
     elif isinstance(result, (list, dict)) and not args.json:
         if result:
             if isinstance(result, dict):
-                if 'results' in result:
-                    if 'prop_list' in result: # vast-db endpoints like /vastauditlog/query_data
-                        assert isinstance(result['results'], list)
-                        result = [dict(zip(result['prop_list'], i)) for i in result['results']]
-                    else: # vms-db endpoints like /events
-                        assert isinstance(result['results'], dict)
-                        result = result['results']
-                else: # single document like /events/123
-                    result = [dict(property=k, value=v) for k, v in result.items()]
+                result = [dict(property=k, value=v) for k, v in result.items()]
             tabulate(result)
     else: # json document
         print(json.dumps(result, indent=2))
