@@ -22,7 +22,7 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None, version=None):
+    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None, version="latest"):
         self._user = user
         self._password = password
         self._tenant = tenant
