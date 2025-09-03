@@ -91,15 +91,20 @@ class VASTClient(object):
             return json.loads(data.decode('utf-8'))
         return data
 
-    def get(self, **params):
-        return self.request('GET', fields=params)
-    def post(self, **params):
-        return self.request('POST', data=params)
-    def put(self, **params):
-        return self.request('PUT', data=params)
-    def patch(self, **params):
-        return self.request('PATCH', data=params)
-    def options(self, **params):
-        return self.request('OPTIONS', fields=params)
-    def delete(self, **params):
-        return self.request('DELETE', data=params)
+    def get(self, query_params=None, data_params=None):
+        return self.request('GET', fields=query_params)
+    
+    def post(self, query_params=None, data_params=None):
+        return self.request('POST', fields=query_params, data=data_params)
+    
+    def put(self, query_params=None, data_params=None):
+        return self.request('PUT', fields=query_params, data=data_params)
+    
+    def patch(self, query_params=None, data_params=None):
+        return self.request('PATCH', fields=query_params, data=data_params)
+    
+    def options(self, query_params=None, data_params=None):
+        return self.request('OPTIONS', fields=query_params)
+    
+    def delete(self, query_params=None, data_params=None):
+        return self.request('DELETE', fields=query_params)
