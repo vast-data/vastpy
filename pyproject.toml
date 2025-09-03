@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vastpy"
-version = "0.3.17"
+version = "0.4"
 description = ""
 authors = ["Alon Horev <alon@vastdata.com>"]
 readme = "README.md"
@@ -11,6 +11,9 @@ vastpy-cli = "vastpy.cli:main"
 [tool.poetry.dependencies]
 python = "^3.6"
 urllib3 = "^1.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^6.0"
 
 [build-system]
 requires = ["poetry-core"]
