@@ -48,7 +48,6 @@ def merge_param_dicts(base_dict, new_dict):
                 else:
                     result[key].append(value)
             else:
-                # Existing value is single, create list with both values
                 if isinstance(value, list):
                     result[key] = [existing_value] + value
                 else:
@@ -96,7 +95,7 @@ def process_parameters(operation, qparam, dparam, params, file_input):
         final_query_params = merge_param_dicts(dict(query_params), legacy_params)
         return final_query_params, dict(data_params)
         
-    elif operation_lower in ['post', 'patch', 'put']:       
+    if operation_lower in ['post', 'patch', 'put']:       
         # Determine body data with precedence: file_data > dparam + legacy
         if file_data is not None:
             final_data_params = file_data
@@ -105,9 +104,8 @@ def process_parameters(operation, qparam, dparam, params, file_input):
         
         return dict(query_params), final_data_params
     
-    else:
-        print(f"The {operation} operation is not supported")
-        sys.exit(1)
+    print(f"The {operation} operation is not supported")
+    sys.exit(1)
 
 def multiline_string(value):
     if isinstance(value, dict):
@@ -208,17 +206,16 @@ def main():
 
     # Process parameters based on HTTP method and CLI arguments
     query_params, data_params = process_parameters(
-        args.operation, 
-        args.qparam, 
-        args.dparam, 
-        args.params, 
+        args.operation,
+        args.qparam,
+        args.dparam,
+        args.params,
         args.file_input
     )
 
     try:
         # Call HTTP method with processed parameters
-        result = method(query_params=query_params if query_params else None,
-         data_params=data_params if data_params else None)
+        result = method(query_params=query_params or None, data_params=data_params or None)
     except RESTFailure as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(2)

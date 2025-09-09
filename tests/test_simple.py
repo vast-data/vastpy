@@ -25,7 +25,8 @@ class MockPoolManager:
         self.last_request = {
             'method': method,
             'fields': fields,
-            'body': body
+            'body': body,
+            'headers': headers
         }
         # Mock successful response
         mock_response = MagicMock()
@@ -127,6 +128,57 @@ class TestParameterHandling(unittest.TestCase):
         self.assertEqual(request['fields'], None)  # No query params
         body_data = json.loads(request['body'].decode('utf-8'))
         self.assertEqual(body_data, {'name': 'John', 'email': 'john@example.com'})
+
+    @patch('vastpy.urllib3.PoolManager')
+    @patch('vastpy.urllib3.disable_warnings')
+    def test_authentication_headers(self, mock_disable_warnings, mock_pool_manager_class):
+        """Test that tenant name and token headers are correctly sent."""
+        mock_pool_manager_class.return_value = self.mock_pool_manager
+        
+        # Test with tenant name and basic auth
+        test_args = [
+            'vastpy-cli', '--address', 'test.com', '--user', 'test', '--password', 'test',
+            '--tenant-name', 'my-tenant', 'get', 'users'
+        ]
+        
+        with patch.object(sys, 'argv', test_args):
+            main()
+        
+        request = self.mock_pool_manager.last_request
+        headers = request.get('headers', {})
+        self.assertIn('X-Tenant-Name', headers)
+        self.assertEqual(headers['X-Tenant-Name'], 'my-tenant')
+        self.assertIn('authorization', headers)  # Basic auth header
+        
+        # Test with token authentication
+        test_args = [
+            'vastpy-cli', '--address', 'test.com', '--token', 'my-secret-token',
+            '--tenant-name', 'token-tenant', 'get', 'status'
+        ]
+        
+        with patch.object(sys, 'argv', test_args):
+            main()
+        
+        request = self.mock_pool_manager.last_request
+        headers = request.get('headers', {})
+        self.assertIn('authorization', headers)
+        self.assertEqual(headers['authorization'], "'Api-Token my-secret-token")
+        self.assertIn('X-Tenant-Name', headers)
+        self.assertEqual(headers['X-Tenant-Name'], 'token-tenant')
+        
+        # Test without tenant name (header should not be present)
+        test_args = [
+            'vastpy-cli', '--address', 'test.com', '--token', 'my-token',
+            'get', 'status'
+        ]
+        
+        with patch.object(sys, 'argv', test_args):
+            main()
+        
+        request = self.mock_pool_manager.last_request
+        headers = request.get('headers', {})
+        self.assertIn('authorization', headers)
+        self.assertNotIn('X-Tenant-Name', headers)  # Should not be present
 
 
 if __name__ == '__main__':
