@@ -194,6 +194,11 @@ EOF
 vastpy-cli patch clusters/<cluster_id>/auditing --file-input config.json
 ```
 
+#### Handling Mixed Parameters
+Some endpoints allow passing query parameters in addition to the standard body parameters. . The CLI uses ````--qparam```` to specify explicit query parameters and ````--dparam```` for explicit body parameters.
+* The default parameters will be merged with the explicit parameters you provide.
+* If the ````--file-input```` parameter is used, it will override any parameters set with --dparam. 
+
 ## API Documentation
 
 While developing applications using the VMS API, please refer to the documentation available on your VAST system:
