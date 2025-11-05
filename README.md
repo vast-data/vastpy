@@ -29,20 +29,38 @@ The package is available on PyPI: https://pypi.org/project/vastpy/
 
 #### Authentication
 
+Authentication is done either with an API token (supported in VAST 5.3 or later):
+
 ```python
 from vastpy import VASTClient
 
-# Initialize with credentials
+# Initialize with a token
+client = VASTClient(
+    address='vast-vms-hostname',
+    token='api-token',
+    tenant='tenant-name', # An optional field, supported for VAST versions 5.3 and later
+    version='api-version' # An optional field, defaults to oldest API
+)
+```
+
+Or with a username and password (all VAST versions):
+```python
+from vastpy import VASTClient
+
+# Initialize with a username + password
 client = VASTClient(
     user='your_username',
     password='your_password',
     address='vast-vms-hostname',
-    token='api-token' # Please provide either an API token for authentication or user + password. API tokens are supported for Vast versions 5.3 and later
-    tenant_name='tenant-name' # An optional field, supported for Vast versions 5.3 and later
+    tenant='tenant-name', # An optional field, supported for VAST versions 5.3 and later
     version='api-version' # An optional field, defaults to oldest API
 )
 ```
-### Obtainig an API Token - Vast 5.3+
+
+#### Obtaining an API Token
+
+In VAST 5.3 and later you can use a username and password to generate an API token:
+
 ```python
 # Authenticate with user + password
 client = VASTClient(
@@ -52,8 +70,11 @@ client = VASTClient(
 )
 
 # Generate an API token for a specific user
-client.apitokens.post(owner='username')
+token_response = client.apitokens.post(owner='username')
+token = token_response['token']
 ```
+
+`token` can then be then used in `VASTClient()` without needing to specify the `user` and `password`.
 
 #### View Management
 
@@ -120,15 +141,15 @@ Credentials can be provided through environment variables or command-line argume
 
 ```bash
 # Using environment variables
-$ export VMS_USER=admin
-$ export VMS_PASSWORD=your_password
-$ export VMS_ADDRESS=vast-vms-hostname
-$ export VMS_TOKEN=token # An optional field supported for Vast versions 5.3 and later
-$ export VMS_TENANT_NAME=tenant-name # An optional field, supported for Vast versions 5.3 and later
-$ export VMS_API_VERSION=api-version # An optional field, defaults to oldest API
+export VMS_USER=admin
+export VMS_PASSWORD=your_password
+export VMS_ADDRESS=vast-vms-hostname
+export VMS_TOKEN=token # For VAST 5.3 and later, you can use a token instead of VMS_USER / VMS_PASSWORD
+export VMS_TENANT_NAME=tenant-name # An optional field, supported for VAST versions 5.3 and later
+export VMS_API_VERSION=api-version # An optional field, defaults to oldest API
 
 # Or using command-line arguments
-$ vastpy-cli --user=admin --password=your_password --address=vast-vms-hostname
+vastpy-cli --user=admin --password=your_password --address=vast-vms-hostname
 ```
 
 #### Basic Operations
@@ -198,7 +219,7 @@ vastpy-cli patch clusters/<cluster_id>/auditing --file-input config.json
 
 While developing applications using the VMS API, please refer to the documentation available on your VAST system:
 ```
-https://vast-vms-hostname/docs
+https://vast-vms-hostname/docs/
 ```
 
 ## Version Compatibility
