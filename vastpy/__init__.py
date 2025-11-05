@@ -54,8 +54,7 @@ class VASTClient(object):
                               cert_server_name=self._cert_server_name,
                               url=f'{self._url}{version_path}/{part}',
                               tenant=self._tenant,
-                              token=self._token,
-                              version=self._version)
+                              token=self._token)
 
     def __repr__(self):
         return f'VASTClient(address="{self._address}", url="{self._url}")'

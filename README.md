@@ -36,8 +36,23 @@ from vastpy import VASTClient
 client = VASTClient(
     user='your_username',
     password='your_password',
+    address='vast-vms-hostname',
+    token='api-token' # Please provide either an API token for authentication or user + password. API tokens are supported for Vast versions 5.3 and later
+    tenant_name='tenant-name' # An optional field, supported for Vast versions 5.3 and later
+    version='api-version' # An optional field, defaults to oldest API
+)
+```
+### Obtainig an API Token - Vast 5.3+
+```python
+# Authenticate with user + password
+client = VASTClient(
+    user='your_username',
+    password='your_password',
     address='vast-vms-hostname'
 )
+
+# Generate an API token for a specific user
+client.apitokens.post(owner='username')
 ```
 
 #### View Management
@@ -108,6 +123,9 @@ Credentials can be provided through environment variables or command-line argume
 $ export VMS_USER=admin
 $ export VMS_PASSWORD=your_password
 $ export VMS_ADDRESS=vast-vms-hostname
+$ export VMS_TOKEN=token # An optional field supported for Vast versions 5.3 and later
+$ export VMS_TENANT_NAME=tenant-name # An optional field, supported for Vast versions 5.3 and later
+$ export VMS_API_VERSION=api-version # An optional field, defaults to oldest API
 
 # Or using command-line arguments
 $ vastpy-cli --user=admin --password=your_password --address=vast-vms-hostname
