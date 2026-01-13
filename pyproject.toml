@@ -10,7 +10,7 @@ vastpy-cli = "vastpy.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-urllib3 = "^1.2"
+urllib3
 
 [build-system]
 requires = ["poetry-core"]
