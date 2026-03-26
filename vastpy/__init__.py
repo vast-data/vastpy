@@ -84,9 +84,7 @@ class VASTClient(object):
                     result.append((k, v))
             fields = result
         version_path = f'/{self._version}' if self._version else ''
-        full_url = f'https://{self._address}/{self._url}{version_path}/'
-        print(f"DEBUG: {method} {full_url}")
-        r = pm.request(method, full_url, headers=headers, fields=fields, body=data)
+        r = pm.request(method, f'https://{self._address}/{self._url}{version_path}/', headers=headers, fields=fields, body=data)
         if r.status not in SUCCESS_CODES:
             raise RESTFailure(method, self._url, fields, r.status, r.data)
         data = r.data

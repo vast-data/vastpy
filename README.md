@@ -39,7 +39,7 @@ client = VASTClient(
     address='vast-vms-hostname',
     token='api-token',
     tenant='tenant-name', # An optional field, supported for VAST versions 5.3 and later
-    version='api-version' # An optional field, defaults to oldest API
+    version='api-version' # An optional field, defaults to latest API
 )
 ```
 
