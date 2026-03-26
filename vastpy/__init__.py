@@ -66,7 +66,7 @@ class VASTClient(object):
             pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
             urllib3.disable_warnings(category=InsecureRequestWarning)
         if self._token:
-            headers = {'authorization': f"'Api-Token {self._token}"}
+            headers = {'authorization': f"Api-Token {self._token}"}
         else:
             headers = urllib3.make_headers(basic_auth=self._user + ':' + self._password)
         if self._tenant:
