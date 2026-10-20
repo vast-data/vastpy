@@ -76,6 +76,26 @@ token = token_response['token']
 
 `token` can then be then used in `VASTClient()` without needing to specify the `user` and `password`.
 
+#### Timeouts
+
+By default a request waits for the VMS indefinitely. Pass `timeout` to give up after a number of seconds,
+or a `urllib3.Timeout` to set the connect and read timeouts separately. Clients derived from this one,
+such as `client.views`, use the same timeout.
+
+```python
+import urllib3
+
+client = VASTClient(address='vast-vms-hostname', token='api-token', timeout=30)
+
+# or 10 seconds to connect, 120 seconds to wait for the response
+client = VASTClient(address='vast-vms-hostname', token='api-token',
+                    timeout=urllib3.Timeout(connect=10, read=120))
+```
+
+A request that times out raises urllib3's exception for it, such as `urllib3.exceptions.MaxRetryError`
+caused by a `ReadTimeoutError`. urllib3 retries idempotent requests such as GET up to 3 times by default,
+so one of those can take up to four times the timeout before it gives up.
+
 #### View Management
 
 ```python
@@ -147,6 +167,7 @@ export VMS_ADDRESS=vast-vms-hostname
 export VMS_TOKEN=token # For VAST 5.3 and later, you can use a token instead of VMS_USER / VMS_PASSWORD
 export VMS_TENANT_NAME=tenant-name # An optional field, supported for VAST versions 5.3 and later
 export VMS_API_VERSION=api-version # An optional field, defaults to oldest API
+export VMS_TIMEOUT=30 # An optional field: request timeout in seconds, no timeout by default
 
 # Or using command-line arguments
 vastpy-cli --user=admin --password=your_password --address=vast-vms-hostname

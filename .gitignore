@@ -1,1 +1,17 @@
 venv/
+.venv/
+
+# bytecode
+__pycache__/
+*.py[cod]
+
+# build output
+build/
+dist/
+*.egg-info/
+
+# tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage

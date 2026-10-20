@@ -22,7 +22,7 @@ SUCCESS_CODES = {http.HTTPStatus.OK,
                  http.HTTPStatus.PARTIAL_CONTENT}
 
 class VASTClient(object):
-    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None, version='latest'):
+    def __init__(self, user=None, password=None, address=None, url='api', cert_file=None, cert_server_name=None, tenant=None, token=None, version='latest', timeout=None):
         self._user = user
         self._password = password
         self._tenant = tenant
@@ -32,6 +32,7 @@ class VASTClient(object):
         self._cert_server_name = cert_server_name
         self._url = url
         self._version = version
+        self._timeout = timeout
         has_token = self._token is not None 
         has_userpass = (self._user is not None or self._password is not None)
 
@@ -55,16 +56,19 @@ class VASTClient(object):
                               url=f'{self._url}{version_path}/{part}',
                               tenant=self._tenant,
                               token=self._token,
-                              version=None)
+                              version=None,
+                              timeout=self._timeout)
 
     def __repr__(self):
         return f'VASTClient(address="{self._address}", url="{self._url}")'
 
     def request(self, method, fields=None, data=None):
+        # seconds, or a urllib3.Timeout; left to urllib3's default (no timeout) when not given
+        pool_kwargs = {} if self._timeout is None else {'timeout': self._timeout}
         if self._cert_file:
-            pm = urllib3.PoolManager(ca_certs=self._cert_file, server_hostname=self._cert_server_name)
+            pm = urllib3.PoolManager(ca_certs=self._cert_file, server_hostname=self._cert_server_name, **pool_kwargs)
         else:
-            pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
+            pm = urllib3.PoolManager(cert_reqs='CERT_NONE', **pool_kwargs)
             urllib3.disable_warnings(category=InsecureRequestWarning)
         if self._token:
             headers = {'authorization': f"Api-Token {self._token}"}
