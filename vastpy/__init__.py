@@ -2,6 +2,8 @@ from urllib3.exceptions import InsecureRequestWarning
 import urllib3
 import http
 import json
+from urllib.parse import unquote, urlsplit, urlunsplit
+from urllib.request import getproxies_environment, proxy_bypass_environment
 
 class RESTFailure(Exception):
     def __init__(self, method, url, fields, status, data):
@@ -62,10 +64,22 @@ class VASTClient(object):
 
     def request(self, method, fields=None, data=None):
         if self._cert_file:
-            pm = urllib3.PoolManager(ca_certs=self._cert_file, server_hostname=self._cert_server_name)
+            pool_options = dict(ca_certs=self._cert_file, server_hostname=self._cert_server_name)
         else:
-            pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
+            pool_options = dict(cert_reqs='CERT_NONE')
             urllib3.disable_warnings(category=InsecureRequestWarning)
+        proxies = getproxies_environment()
+        proxy_url = proxies.get('https') or proxies.get('http')
+        if proxy_url and not proxy_bypass_environment(self._address, proxies):
+            proxy_headers = None
+            proxy = urlsplit(proxy_url)
+            if proxy.username is not None:
+                credentials = '{}:{}'.format(unquote(proxy.username), unquote(proxy.password or ''))
+                proxy_headers = urllib3.make_headers(proxy_basic_auth=credentials)
+                proxy_url = urlunsplit(proxy._replace(netloc=proxy.netloc.rsplit('@', 1)[-1]))
+            pm = urllib3.ProxyManager(proxy_url, proxy_headers=proxy_headers, **pool_options)
+        else:
+            pm = urllib3.PoolManager(**pool_options)
         if self._token:
             headers = {'authorization': f"Api-Token {self._token}"}
         else:
