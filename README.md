@@ -222,6 +222,46 @@ While developing applications using the VMS API, please refer to the documentati
 https://vast-vms-hostname/docs/
 ```
 
+## Proxies
+
+Both the Python SDK and `vastpy-cli` read proxy environment variables for each
+request. `HTTPS_PROXY` selects the proxy for VMS HTTPS requests; `HTTP_PROXY` is
+used as a fallback. Proxy URLs must use `http://` or `https://` (the scheme is the
+connection to the proxy, not the VMS). For example:
+
+```bash
+export HTTPS_PROXY=http://proxy.example.com:8080
+export NO_PROXY=localhost,127.0.0.1,.internal.example.com
+vastpy-cli get views
+```
+
+`NO_PROXY` bypasses the proxy for matching hosts, domains, or `host:port` entries.
+Set it to `*` to bypass all proxies. Lowercase variables (`https_proxy`,
+`http_proxy`, and `no_proxy`) are also supported and take precedence over their
+uppercase equivalents, including an empty lowercase value. As in Python's
+standard library, uppercase `HTTP_PROXY` is ignored when `REQUEST_METHOD` is set
+(a CGI environment).
+
+HTTP Basic proxy authentication can be supplied as
+`http://username:password@proxy.example.com:8080`; percent-encode special
+characters in the username and password. Proxy credentials are sent to the
+proxy separately from VMS authentication. Existing VMS certificate settings
+apply to proxied requests as well.
+
+When no applicable proxy is configured, requests connect directly. Native
+operating-system proxy settings, `ALL_PROXY`, and SOCKS proxies are not used.
+
+## Development tests
+
+Run the regression tests with the project's dependencies installed:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The networking tests use local HTTPS and HTTP CONNECT servers. They require the
+`openssl` command to generate a temporary certificate; no VAST cluster is needed.
+
 ## Version Compatibility
 
 This SDK is designed to be schema-less, making it compatible with all VAST versions. The Python objects are translated directly to REST API endpoints:
