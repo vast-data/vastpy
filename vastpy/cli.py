@@ -76,7 +76,7 @@ def tabulate(data):
             should_continue = False
             for index, (key, width) in enumerate(key_to_width_items):
                 if obj.get(key):
-                    value = obj[key].pop()
+                    value = obj[key].pop(0)
                     should_continue = should_continue or bool(obj[key])
                 else:
                     value = ''
